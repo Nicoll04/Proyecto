@@ -1,3 +1,5 @@
+//Nicoll Yuliana Acosta Delgado
+
 /*
 Define el constructor de la clase Bicicleta, que acepta cuatro parámetros
 (ID, color, modelo y ubicación) y los asigna a las propiedades 
@@ -68,6 +70,7 @@ Bicicleta.removeById = function(aBiciId){
   if (index != null){Bicicleta.allBicis.splice(index,1)}
 }
 
+/*
 var a = new Bicicleta(1, 'verde', 'urbana', [4.5797436491269075, -74.15752143352218]);
 var b = new Bicicleta(2, 'rojo', 'urbana', [4.658629302804913, -74.09339353167381]);
 var c = new Bicicleta(3, 'Morado', 'Electric', [4.60687042436782, -74.05543974244905]);
@@ -76,8 +79,8 @@ Bicicleta.add(a);
 Bicicleta.add(b);
 Bicicleta.add(c);
 
-/*
 Se exporta la clase Bicicleta para que pueda ser utilizada en otros
 archivos como un módulo.
 */
+
 module.exports = Bicicleta

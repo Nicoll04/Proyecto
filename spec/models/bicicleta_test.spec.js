@@ -1,6 +1,13 @@
+//Nicoll Yuliana Acosta Delgado
+
 var Bicicleta = require('../../models/bicicleta')
 
+/*asegura que el array allBicis de la clase Bicicleta esté vacío 
+antes de cada prueba.*/
+
 beforeEach(() => {Bicicleta.allBicis = []})
+
+/*prueba si el array allBicis comienza vacío*/
 
 describe("Bicicleta.allBicis", () => {
   it("comienza vacia", function() {
@@ -8,16 +15,26 @@ describe("Bicicleta.allBicis", () => {
   })
 })
 
+/*prueba el método add de la clase Bicicleta, donde se crea una nueva 
+bicicleta (a) y se agrega al array allBicis. Luego se verifica que la 
+bicicleta se agregó correctamente.*/
+
 describe('Bicicleta.add', () => {
   it("agregamos una", () => {
     expect(Bicicleta.allBicis.length).toBe(0)
-    var a = new Bicicleta(1, 'rojo', 'urbana', [4.6718,-74.0638])
+    var a = new Bicicleta(1, 'verde', 'urbana', [4.5797, -74.1575])
     Bicicleta.add(a)
 
     expect(Bicicleta.allBicis.length).toBe(1)
     expect(Bicicleta.allBicis[0]).toBe(a)
   })
 })
+
+/*prueba el método findById de la clase Bicicleta. Se crean dos 
+bicicletas y se agregan al array allBicis, luego se busca una bicicleta
+por su id y se verifican sus atributos.
+
+*/
 
 describe("Bicicleta.findById", () => {
   it("debe buscar la bicicleta con el id correspondiente", function() {
@@ -36,6 +53,10 @@ describe("Bicicleta.findById", () => {
     expect(null).toBe(targetBici)
   })
 })
+
+/*prueba el método removeById de la clase Bicicleta. Se agregan tres 
+bicicletas al array allBicis, luego se elimina una de ellas por su id y
+se verifica que haya sido eliminada correctamente.*/
 
 describe("Bicicleta.removeById", () => {
   it("debe eliminar una bicicleta", function() {
@@ -68,8 +89,7 @@ describe("Bicicleta.removeById", () => {
     Bicicleta.removeById(1)
     expect(Bicicleta.allBicis.length).toBe(2)
 
-    var aBici4 = new Bicicleta(3, "verde", "montaña")
-    Bicicleta.add(aBici4)
 
   })
 })
+

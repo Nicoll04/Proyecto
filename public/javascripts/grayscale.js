@@ -1,3 +1,5 @@
+//Nicoll Yuliana Acosta Delgado
+
 (function($) {
   "use strict"; // Start of use strict
 
