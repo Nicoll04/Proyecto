@@ -1,12 +1,42 @@
 //Nicoll Yuliana Acosta Delgado
 
+var mongoose = require('mongoose')
 var Bicicleta = require('../../models/bicicleta')
 var request = require('request')
 var server = require('../../bin/www')
 
-beforeEach(() => {Bicicleta.allBicis = []})
+var base_url = 'http://localhost:5000/api/bicicletas'
+
+//beforeEach(() => {Bicicleta.allBicis = []})
 
 describe('Bicicleta API', () => {
+    beforeEach(function(done) {
+        var mongoDB = 'mongodb://localhost/testdb'
+        mongoose.connect(mongoDB)
+    
+        const db = mongoose.connection
+        db.on('error', console.error.bind(console, 'Connection error'))
+        db.once('open', function() {
+            console.log('we are connected to test database!')
+            done();
+        })
+    })
+
+    afterEach(function(done) {
+        Bicicleta.deleteMany({})
+            .then(() => done())
+            .catch(err => console.error(err));
+    });
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     describe('GET BICICLETAS /' , ()=> {
         it('Status 200', () => {
             expect(Bicicleta.allBicis.length).toBe(0);

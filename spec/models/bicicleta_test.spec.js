@@ -1,95 +1,88 @@
 //Nicoll Yuliana Acosta Delgado
 
+var mongoose = require('mongoose')
+
 var Bicicleta = require('../../models/bicicleta')
 
-/*asegura que el array allBicis de la clase Bicicleta esté vacío 
-antes de cada prueba.*/
+describe('Testing Bicicleta', function(){
+  beforeEach(function(done) {
+    var mongoDB = 'mongodb://localhost/testdb'
+    mongoose.connect(mongoDB)
 
-beforeEach(() => {Bicicleta.allBicis = []})
-
-/*prueba si el array allBicis comienza vacío*/
-
-describe("Bicicleta.allBicis", () => {
-  it("comienza vacia", function() {
-    expect(Bicicleta.allBicis.length).toBe(0);
+    const db = mongoose.connection
+    db.on('error', console.error.bind(console, 'Connection error'))
+    db.once('open', function() {
+        console.log('we are connected to test database!')
+        done();
+    })
   })
+
+  afterEach(function(done) {
+    Bicicleta.deleteMany({})
+        .then(() => done())
+        .catch(err => console.error(err));
+});
+
+
+  describe('Bicileta.createInstance', () => {
+    it('Crea una instancia de Bicicleta', () => {
+        var bici = Bicicleta.createInstance(1, "verde", "urbana", [4.57,-74.1])
+
+        expect(bici.code).toBe(1)
+        expect(bici.color).toBe("verde")
+        expect(bici.modelo).toBe("urbana")
+        expect(bici.ubicacion[0]).toEqual(4.57)
+        expect(bici.ubicacion[1]).toEqual(-74.1)
+    })
+  })
+
+  describe('Bicicleta.allBicis', () => {
+    it('Comienza vacia' , (done) => {
+        Bicicleta.allBicis(function(err, bicis){
+          expect(bicis.length).toBe(0);
+          done()
+      })
+    })
+  })
+
+  describe('Bicicleta.add', () => {
+    it('agrega una sola bici', (done) => {
+      var aBici = new Bicicleta({code: 1, color: "verde", modelo: "urbana"})
+      Bicicleta.add(aBici, function(err, newBici){
+        if (err) console.log(err);
+        Bicicleta.allBicis(function(err, bicis){
+            expect(bicis.length).toEqual(1)
+            expect(bicis[0].code).toEqual(aBici.code)
+            done()
+        })
+      })
+    })
+  })
+
+  describe('Bicicleta.findByCode', () => {
+    it('Debe devolcer la bici con code 1', (done) => {
+      Bicicleta.allBicis(function(err, bicis){
+        expect(bicis.length).toBe(0)
+
+        var aBici1 = new Bicicleta({code: 1, color: "verde", modelo: "urbana"})
+        Bicicleta.add(aBici1, function(err, newBici){
+            if (err) console.log(err)
+
+            var aBici2 = new Bicicleta({code: 2, color: "roja", modelo: "montaña"})
+            Bicicleta.add(aBici2, function(err, newBici){
+              if (err) console.log(err)
+              Bicicleta.findByCode(1, function(error, targetBici){
+                expect(targetBici.code).toBe(aBici.code)
+                expect(targetBici.color).toBe(aBici.color)
+                expect(targetBici.modelo).toBe(aBici.modelo)
+                done()
+              })
+            })
+        })
+      })
+    })
+  } )
+
 })
 
-/*prueba el método add de la clase Bicicleta, donde se crea una nueva 
-bicicleta (a) y se agrega al array allBicis. Luego se verifica que la 
-bicicleta se agregó correctamente.*/
-
-describe('Bicicleta.add', () => {
-  it("agregamos una", () => {
-    expect(Bicicleta.allBicis.length).toBe(0)
-    var a = new Bicicleta(1, 'verde', 'urbana', [4.5797, -74.1575])
-    Bicicleta.add(a)
-
-    expect(Bicicleta.allBicis.length).toBe(1)
-    expect(Bicicleta.allBicis[0]).toBe(a)
-  })
-})
-
-/*prueba el método findById de la clase Bicicleta. Se crean dos 
-bicicletas y se agregan al array allBicis, luego se busca una bicicleta
-por su id y se verifican sus atributos.
-
-*/
-
-describe("Bicicleta.findById", () => {
-  it("debe buscar la bicicleta con el id correspondiente", function() {
-    expect(Bicicleta.allBicis.length).toBe(0)
-    var aBici1 = new Bicicleta(1, "verde", "urbana")
-    var aBici2 = new Bicicleta(2, "rojo", "montaña")
-    Bicicleta.add(aBici1)
-    Bicicleta.add(aBici2)
-
-    var targetBici = Bicicleta.findById(1)
-    expect(targetBici.id).toBe(aBici1.id)
-    expect(targetBici.color).toBe(aBici1.color)
-    expect(targetBici.modelo).toBe(aBici1.modelo)
-
-    var targetBici = Bicicleta.findById(100)
-    expect(null).toBe(targetBici)
-  })
-})
-
-/*prueba el método removeById de la clase Bicicleta. Se agregan tres 
-bicicletas al array allBicis, luego se elimina una de ellas por su id y
-se verifica que haya sido eliminada correctamente.*/
-
-describe("Bicicleta.removeById", () => {
-  it("debe eliminar una bicicleta", function() {
-    expect(Bicicleta.allBicis.length).toBe(0)
-    var aBici1 = new Bicicleta(1, "verde", "urbana")
-    var aBici2 = new Bicicleta(2, "rojo", "montaña")
-    var aBici3 = new Bicicleta(3, "blanca", "ruta")
-    Bicicleta.add(aBici1)
-    Bicicleta.add(aBici2)
-    Bicicleta.add(aBici3)
-
-    expect(Bicicleta.allBicis.length).toBe(3)
-
-    Bicicleta.removeById(1)
-    expect(Bicicleta.allBicis.length).toBe(2)
-
-    var targetBici1 = Bicicleta.findById(1)
-    expect(null).toBe(targetBici1)
-
-    var targetBici2 = Bicicleta.findById(2)
-    expect(targetBici2.id).toBe(aBici2.id)
-    expect(targetBici2.color).toBe(aBici2.color)
-    expect(targetBici2.modelo).toBe(aBici2.modelo)
-
-    var targetBici3 = Bicicleta.findById(3)
-    expect(targetBici3.id).toBe(aBici3.id)
-    expect(targetBici3.color).toBe(aBici3.color)
-    expect(targetBici3.modelo).toBe(aBici3.modelo)
-
-    Bicicleta.removeById(1)
-    expect(Bicicleta.allBicis.length).toBe(2)
-
-
-  })
-})
 
